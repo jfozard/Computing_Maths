@@ -323,6 +323,7 @@ Interactive job requesting GPU on HEC
 ### 5.5 Storage on the HEC
 
 | File Area | Quota | Backup Policy | File Retention policy | Location | Environment var |
+|-----------|-------|---------------|-----------------------|----------|-----------------|
 | home | 10G | Nightly for 90 days | For the lifetime of the account | global | $HOME |
 | storage | 200G | None | For the lifetime of the account | global | $global_storage |
 | scratch | 10T | None | Files automatically deleted after 4 weeks | global | $global_scratch |
@@ -494,7 +495,7 @@ mclapply-test.R
 ```R
 library(parallel)
 # Don't use parallel::detectCores(); either hard-code or use parallely::availableCores() and parallely::availableWorkers()
-ncores <- 8
+n_cores <- 8
 n_simulations <- 200
 n_sample_per_sim <- 1000
 
@@ -511,7 +512,7 @@ base_simulation_seed <- 1234
 
 results_list <- mclapply(
  1:n_simulations,
- function(i) { run_one_simulation(i, base_simulation_seed) }.
+ function(i) { run_one_simulation(i, base_simulation_seed) },
  mc.cores = n_cores
 )
 results_mclapply <- do.call(rbind, results_list)
@@ -574,7 +575,7 @@ write.csv(results_df_foreach, "independent_sim_results_foreach.csv", row.names =
 Penguins
 ```bash
 #!/bin/bash
-#SBATCH --partition=PenguinsPartition
+#SBATCH --partition=PenguinPartition
 #SBATCH --job-name=r_sim_array
 #SBATCH --array=1-200  # Run 200 tasks, TASK_ID will go from 1 to 200
 #SBATCH --cpus-per-task=1
@@ -588,17 +589,15 @@ Penguins
 mkdir -p slurm_logs
 mkdir -p slurm_results
 
-# Load R module (adjust to your HPC environment)
-
 # Get the SLURM array task ID
 TASK_ID=${SLURM_ARRAY_TASK_ID}
 
 # Call the R script, passing the task ID as an argument
 # The R script will use this ID to set its seed and name its output file
-Rscript single_simulation_for_slurm.R ${TASK_ID}
+Rscript single_simulation.R ${TASK_ID}
 ```
 
-single_simulation_for_slurm.R
+single_simulation.R
 ```R
 args <- commandArgs(trailingOnly = TRUE)
 task_id <- as.integer(args[1])
@@ -623,7 +622,7 @@ dir.create(output_dir, showWarnings = FALSE) # Create dir if it doesn't exist
 output_file_csv <- file.path(output_dir, paste0("result_task_", task_id, ".csv"))
 write.csv(result_data, file = output_file_csv, row.names = FALSE)
 
-cat("Task", task_id, "completed. Result saved to", output_file_rds, "\n")
+cat("Task", task_id, "completed. Result saved to", output_file_csv, "\n")
 ```
 
 
