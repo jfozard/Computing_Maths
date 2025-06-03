@@ -452,12 +452,25 @@ TASK_ID=${SLURM_ARRAY_TASK_ID}
 
 # Call the R script, passing the task ID as an argument
 # The R script will use this ID to set its seed and name its output file
+cd python-example
+eval $(poetry env activate)
 python array_test.py ${TASK_ID}
 ```
 
 
 ```Python
+import os
+import sys
 
+def worker(x):
+    return x*x
+
+if __name__=="__main__":
+    idx = int(sys.argv[1])
+    output_file = sys.argv[2]
+    results = worker(idx)
+    with open(output_file, 'w') as f:
+        print(results, file=f)
 
 ```
 
@@ -510,6 +523,8 @@ To detatch session `C-b d`
 To reattach `tmux ls`, `tmux attach -t 0`
 
 ### vscode ssh
+
+Install vscode Remote-ssh extension
 
 
 
