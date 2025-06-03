@@ -547,7 +547,7 @@ base_simulation_seed <- 1000 # A base seed for reproducibility
 
 results_foreach <- foreach(
   i = 1:n_simulations,
-  .combine = rbind,  # Combine results into a data frame
+  .combine = rbind  # Combine results into a data frame
 ) %dopar% {
   run_one_simulation(sim_id = i, base_seed = base_simulation_seed)
 }
