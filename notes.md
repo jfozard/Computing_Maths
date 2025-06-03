@@ -551,7 +551,6 @@ results_foreach <- foreach(
   i = 1:n_simulations,
   .combine = rbind,  # Combine results into a data frame
   .packages = NULL,  # List any packages needed inside the loop (none here as using base R)
-  .export = c("run_one_simulation", "n_sample_per_sim") # Export needed items
 ) %dopar% {
   # The code inside %dopar% is executed in parallel
   run_one_simulation(sim_id = i, base_seed = base_simulation_seed)
