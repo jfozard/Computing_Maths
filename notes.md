@@ -361,7 +361,7 @@ https://docs.hpc.shef.ac.uk/en/latest/referenceinfo/scheduler/SLURM/SLURM-enviro
 
 For, e.g. multiprocessing on a single node, can use the form
 
-HPC
+HEC
 ```bash
 #!/bin/bash
 #SBATCH --partition=parallel       # Partition to run on (-p_
@@ -421,7 +421,7 @@ HEC
 #SBATCH --output=array_output_%A_%a.out # Job_ID, Task_ID
 #SBATCH --error=array_error_%A_%a.err
 
-# Load R module (adjust to your HPC environment)
+# Load python module
 module activate miniforge
 
 # Get the SLURM array task ID
@@ -429,7 +429,7 @@ TASK_ID=${SLURM_ARRAY_TASK_ID}
 
 # Call the R script, passing the task ID as an argument
 # The R script will use this ID to set its seed and name its output file
-python array_test.py ${TASK_ID}
+python array_test.py ${TASK_ID} ${TASK_ID}.dat
 ```
 
 Penguins
@@ -444,20 +444,19 @@ Penguins
 #SBATCH --output=array_output_%A_%a.out # Job_ID, Task_ID
 #SBATCH --error=array_error_%A_%a.err
 
-# Load R module (adjust to your HPC environment)
-source start-pyenv
+# Init Pyenv
+source ${HOME}/start-pyenv
 
 # Get the SLURM array task ID
 TASK_ID=${SLURM_ARRAY_TASK_ID}
 
 # Call the R script, passing the task ID as an argument
 # The R script will use this ID to set its seed and name its output file
-cd python-example
 eval $(poetry env activate)
-python array_test.py ${TASK_ID}
+python array_test.py ${TASK_ID} ${TASK_ID}.dat
 ```
 
-
+array_test.py
 ```Python
 import os
 import sys
@@ -476,11 +475,38 @@ if __name__=="__main__":
 
 ### 6.3 mclapply in R
 
-### 6.4 Job arrays in R
+Penguins
 
-sbatch script run_sim_array.sh
 ```bash
 #!/bin/bash
+#SBATCH --partition=PenguinPartition       # Partition to run on (-p_
+#SBATCH --job-name=R       # Name of the job (-J)
+#SBATCH --nodes=1                 # Number of nodes to use (-N)
+#SBATCH --ntasks-per-node=1       # Number of tasks (processes) per node 
+#SBATCH --cpus-per-task=8         # Number of CPU cores per task (-c)
+#SBATCH --mem=1G                  # Memory per node (e.g., 1GB). Can also specify per CPU with --mem-per-cpu
+#SBATCH --time=00:05:00           # Wall clock time limit (e.g., 5 minutes)
+
+RScript mclapply-test.R
+```
+mclapply-test.R
+```R
+library(parallel)
+# Don't use parallel::detectCores(); either hard-code or use parallely::availableCores() and parallely::availableWorkers()
+ncores <- 8
+```
+
+foreach-test.R
+```R
+```
+
+
+### 6.4 Job arrays in R
+
+Penguins
+```bash
+#!/bin/bash
+#SBATCH --partition=PenguinsPartition
 #SBATCH --job-name=r_sim_array
 #SBATCH --array=1-200  # Run 200 tasks, TASK_ID will go from 1 to 200
 #SBATCH --cpus-per-task=1
@@ -495,7 +521,6 @@ mkdir -p slurm_logs
 mkdir -p slurm_results
 
 # Load R module (adjust to your HPC environment)
-module load R/4.3.1
 
 # Get the SLURM array task ID
 TASK_ID=${SLURM_ARRAY_TASK_ID}
@@ -505,8 +530,15 @@ TASK_ID=${SLURM_ARRAY_TASK_ID}
 Rscript single_simulation_for_slurm.R ${TASK_ID}
 ```
 
+single_simulation_for_slurm.R
 ```R
 
+
+```
+
+
+combine_results.R
+```R
 
 ```
 
