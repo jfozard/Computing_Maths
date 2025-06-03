@@ -314,7 +314,7 @@ Interactive job requesting GPU on HEC
 `squeue -u $(whoami)` - show all my jobs
 
 `sacct` - show in-progress jobs
-
+https://github.com/AidenFarrell/Graphical_Conditional_Extremes
 `scancel <job_id>` - cancel a running / queued job.
 
 
@@ -652,6 +652,32 @@ To reattach `tmux ls`, `tmux attach -t 0`
 
 Install vscode Remote-ssh extension
 
+### ssh multiplexing
+
+SSH multiplexing. The most commonly used SSH client is called OpenSSH, which can be configured to reuse an ssh session by adding the following to your local (not HEC/Penguins') ~/.ssh/config file:
+
+```
+Host wayland-2022                
+   HostName wayland-2022.hec.lancs.ac.uk
+   ControlPath ~/.ssh/control/%C.sock
+   ControlMaster auto
+   ControlPersist 10m
+   ForwardX11 yes
+   ForwardX11Trusted yes
+   User fozardj
+
+   ControlPath ~/.ssh/control/%C.sock
+   ControlMaster auto
+   ControlPersist 10m
+```
+And then running the following commands:
+```
+mkdir ~/.ssh/control
+chmod 700 ~/.ssh/control
+```
+```
+ssh wayland-2022
+```
 
 
 
