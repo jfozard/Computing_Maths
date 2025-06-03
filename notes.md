@@ -2,7 +2,6 @@
 ---
 
 title: "Penguins, HEC and other compute resources"
-format: html
 ---
 
 # First steps
@@ -489,15 +488,84 @@ Penguins
 
 RScript mclapply-test.R
 ```
+
+
 mclapply-test.R
 ```R
 library(parallel)
 # Don't use parallel::detectCores(); either hard-code or use parallely::availableCores() and parallely::availableWorkers()
 ncores <- 8
+n_simulations <- 200
+n_sample_per_sim <- 1000
+
+# Function to be executed in parallel
+run_one_simulation <- function(sim_id, base_seed) {
+  set.seed(base_seed + sim_id) # Ensure each simulation gets a unique seed
+  true_mu <- rnorm(1, mean = 0, sd = 1)
+  sim_sample <- rnorm(n_sample_per_sim, mean = true_mu, sd = 1)
+  # Return a named vector or list for easier combination
+  c(sim_id = sim_id, estimated_mu = mean(sim_sample), sample_sd = sd(sim_sample), true_mu = true_mu)
+}
+
+base_simulation_seed <- 1234
+
+results_list <- mclapply(
+ 1:n_simulations,
+ function(i) { run_one_simulation(i, base_simulation_seed) }.
+ mc.cores = n_cores
+)
+results_mclapply <- do.call(rbind, results_list)
+head(results_mclapply)
+summary(results_mclapply)
+write.csv(results_mclapply, "independent_sim_results_mclapply.csv", row.names = FALSE)
 ```
 
 foreach-test.R
 ```R
+library(foreach)
+library(doParallel)
+library(parallel) # For detectCores
+
+# Simulation parameters
+n_simulations <- 200
+n_sample_per_sim <- 1000
+
+# Function to be executed in parallel
+run_one_simulation <- function(sim_id, base_seed) {
+  set.seed(base_seed + sim_id) # Ensure each simulation gets a unique seed
+  true_mu <- rnorm(1, mean = 0, sd = 1)
+  sim_sample <- rnorm(n_sample_per_sim, mean = true_mu, sd = 1)
+  # Return a named vector or list for easier combination
+  c(sim_id = sim_id, estimated_mu = mean(sim_sample), sample_sd = sd(sim_sample), true_mu = true_mu)
+}
+
+# Setup parallel backend
+n_cores <- 8
+cl <- makeCluster(n_cores)
+registerDoParallel(cl) # Register the cluster for foreach
+
+base_simulation_seed <- 1000 # A base seed for reproducibility
+
+results_foreach <- foreach(
+  i = 1:n_simulations,
+  .combine = rbind,  # Combine results into a data frame
+  .packages = NULL,  # List any packages needed inside the loop (none here as using base R)
+  .export = c("run_one_simulation", "n_sample_per_sim") # Export needed items
+) %dopar% {
+  # The code inside %dopar% is executed in parallel
+  run_one_simulation(sim_id = i, base_seed = base_simulation_seed)
+}
+
+# Stop the cluster
+stopCluster(cl)
+registerDoSEQ() # Good practice to deregister parallel backend
+
+# Convert to data frame for easier analysis
+results_df_foreach <- as.data.frame(results_foreach)
+head(results_df_foreach)
+summary(results_df_foreach)
+write.csv(results_df_foreach, "independent_sim_results_foreach.csv", row.names = FALSE)
+
 ```
 
 
@@ -532,14 +600,44 @@ Rscript single_simulation_for_slurm.R ${TASK_ID}
 
 single_simulation_for_slurm.R
 ```R
+args <- commandArgs(trailingOnly = TRUE)
+task_id <- as.integer(args[1])
+n_sample_per_sim <- 1000
+base_seed <- 2000 # A different base seed for this set of simulations
 
+set.seed(base_seed + task_id) # Ensure each task has a unique seed!
 
+true_mu <- rnorm(1, mean = 0, sd = 1)
+sim_sample <- rnorm(n_sample_per_sim, mean = true_mu, sd = 1)
+
+result_data <- data.frame(
+  task_id = task_id,
+  true_mu = true_mu,
+  estimated_mu = mean(sim_sample),
+  sample_sd = sd(sim_sample)
+)
+
+output_dir <- "slurm_results"
+dir.create(output_dir, showWarnings = FALSE) # Create dir if it doesn't exist
+
+output_file_csv <- file.path(output_dir, paste0("result_task_", task_id, ".csv"))
+write.csv(result_data, file = output_file_csv, row.names = FALSE)
+
+cat("Task", task_id, "completed. Result saved to", output_file_rds, "\n")
 ```
 
 
 combine_results.R
 ```R
-
+results_dir <- "slurm_results"
+result_files_csv <- list.files(results_dir, pattern = "\\.csv$", full.names = TRUE)
+data_list <- lapply(
+  csv_files,
+  read.csv,
+)
+combined_results <- do.call(rbind, data_list)
+head(combined_results)
+summary(combined_results)
 ```
 
 
