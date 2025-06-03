@@ -623,7 +623,7 @@ cat("Task", task_id, "completed. Result saved to", output_file_csv, "\n")
 combine_results.R
 ```R
 results_dir <- "slurm_results"
-result_files_csv <- list.files(results_dir, pattern = "\\.csv$", full.names = TRUE)
+csv_files <- list.files(results_dir, pattern = "\\.csv$", full.names = TRUE)
 data_list <- lapply(
   csv_files,
   read.csv,
@@ -631,6 +631,7 @@ data_list <- lapply(
 combined_results <- do.call(rbind, data_list)
 head(combined_results)
 summary(combined_results)
+write.csv(combined_results, file = "combined_results.csv", row.names = FALSE)
 ```
 
 
