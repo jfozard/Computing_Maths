@@ -11,7 +11,7 @@ Getting results quicker is great - but only if you're solving the right problem,
 
 ## 1  Getting the Correct Result
 
-### 1.1 Integration & Regression Tests
+## 1.1 Integration & Regression Tests
 
 Run the entire code, and verify the overall behavior of your program.
 
