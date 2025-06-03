@@ -559,7 +559,6 @@ results_foreach <- foreach(
 
 # Stop the cluster
 stopCluster(cl)
-registerDoSEQ() # Good practice to deregister parallel backend
 
 # Convert to data frame for easier analysis
 results_df_foreach <- as.data.frame(results_foreach)
