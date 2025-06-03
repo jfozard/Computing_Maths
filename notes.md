@@ -484,7 +484,7 @@ Penguins
 #SBATCH --cpus-per-task=8         # Number of CPU cores per task (-c)
 #SBATCH --mem=1G                  # Memory per node (e.g., 1GB). Can also specify per CPU with --mem-per-cpu
 #SBATCH --time=00:05:00           # Wall clock time limit (e.g., 5 minutes)
-
+export R_LIBS_USER=~/R/library/
 RScript mclapply-test.R
 ```
 
@@ -518,6 +518,7 @@ head(results_mclapply)
 summary(results_mclapply)
 write.csv(results_mclapply, "independent_sim_results_mclapply.csv", row.names = FALSE)
 ```
+For proper RNG - `clusterSetRNGStream(cl, iseed)`
 
 foreach-test.R
 ```R
@@ -562,6 +563,7 @@ summary(results_df_foreach)
 write.csv(results_df_foreach, "independent_sim_results_foreach.csv", row.names = FALSE)
 
 ```
+Note %dorng% for proper (uncorrelated streams) for RNG.
 
 
 ### 6.4 Job arrays in R
