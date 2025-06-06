@@ -23,7 +23,6 @@ Run the entire code, and verify the overall behavior of your program.
 
 If it's hard to test the overall behaviour of the code - e.g. the problem is too complex, ensure that the code
 is split up into functions - ideally pure, with have no side-effects - and write tests.
-srun --pty bash -i
 Different languages have different testing frameworks
 
 | Language | Framework            |
@@ -121,18 +120,7 @@ Use profilers such as `profvis` (R) or `cProfile`/`austin`/`scalene` (Python) to
 * Small cluster, suitable for prototyping, smaller jobs, and getting familiar with a cluster environment.
 * 5 machines with >=72 CPUs, 512GB ram.
 * To access - ask Mariusz / Cyrus.
-* Documentation - http://ma-info.lancs.ac.uk/ . Grp-Penguins```python
-from multiprocessing import Pool
-import os
-
-def worker(x):
-    return x * x
-
-if __name__ == '__main__':
-    print(len(os.sched_getaffinity(0)))
-    with Pool(8) as p:
-        results = p.map(worker, range(100))
-    print(results)
+* Documentation - http://ma-info.lancs.ac.uk/ . Grp-Penguins
 
 #### **HEC (High-End Computing) Cluster**
 * Lancaster Univesity main computing resource. Typically offers more cores, memory, and shared access via a job scheduler like SLURM.
@@ -155,7 +143,7 @@ See also HeX
 
 Typically login via ssh to the login (or head or job submission) nodes.
 Usually no direct access to compute nodes.
-(HEC: ssh username@wayland-2022.hec.lancs.ac.uk Penguins: ssh  username@icefloe-fe.lancs.ac.uk)
+(HEC: `ssh username@wayland-2022.hec.lancs.ac.uk` Penguins: `ssh  username@icefloe-fe.lancs.ac.uk`)
 
 Login nodes are shared between all users - overuse (OOM) can make the cluster unusable.
 Typically only for installing software, compiling code (this can be tricky), and submitting jobs.
@@ -245,6 +233,7 @@ Penguin example
 ```
 plus all the other usual stuff
 
+Once ssh'd into login node `sbatch <name of batch file>` will submit the job to the queue.
 
 
 
@@ -255,6 +244,8 @@ plus all the other usual stuff
 See list with `module avail` e.g. `module add R/4.3.1`
 Will probably need to add libraries
 For Python - `module add miniforge/20240923` and create conda environment, or `module add opence` for outdated versions of ML stack.
+
+These module add commands need to be after all the sbatch directives but before the command you want to run in the sbatch script.
 
 #### Penguins 
 
