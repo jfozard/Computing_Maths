@@ -229,7 +229,7 @@ Can do all sorts of extra things
 Penguin example
 ```
 #!/bin/bash
-#SBATCH --partition Penguin
+#SBATCH --partition PenguinPartition
 ```
 plus all the other usual stuff
 
@@ -556,6 +556,7 @@ write.csv(results_df_foreach, "independent_sim_results_foreach.csv", row.names =
 ```
 Note %dorng% for proper (uncorrelated streams) for RNG.
 
+for parSapply custerSetRNGStream
 
 ### 6.4 Job arrays in R
 
@@ -627,6 +628,43 @@ summary(combined_results)
 write.csv(combined_results, file = "combined_results.csv", row.names = FALSE)
 ```
 
+```
+more submit_array.sh 
+#!/bin/bash
+#SBATCH --job-name=r_sim_array
+#SBATCH --array=1-10  # Run 200 tasks, TASK_ID will go from 1 to 200
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=1G
+#SBATCH --partition PenguinPartition
+#SBATCH --time=00:10:00 # 30 minutes per task (adjust as needed)
+#SBATCH --output=parallel_%A_%a.out # Job_ID, Task_ID
+#SBATCH --error=parallel_error_%A_%a.err
+
+TASK_ID=${SLURM_ARRAY_TASK_ID}
+
+Rscript parallel_seeds.R ${TASK_ID}
+```
+
+```
+args = commandArgs(trailingOnly=TRUE)
+
+idx = as.numeric(args[1])
+
+library(parallel)
+RNGkind("L'Ecuyer-CMRG")
+set.seed(42)
+seeds <- list(.Random.seed)
+if (idx>1) {
+    for (i in 2:idx) seeds[[i]] <- nextRNGStream(seeds[[i - 1]])
+}
+
+print(seeds)
+.Random.seed <- seeds[[idx]]
+
+d <-rnorm(5)
+df <- data.frame(data=d)
+write.csv(d, paste0("output_",args[1],".csv"))
+```
 
 ## 7. Other useful things
 
