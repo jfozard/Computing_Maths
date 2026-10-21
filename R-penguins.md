@@ -93,6 +93,7 @@ head(results_mclapply)
 summary(results_mclapply)
 
 write.csv(results_mclapply, "independent_sim_results_mclapply.csv", row.names = FALSE)
+print(paste0("Simulated ", n_samples, " and written to ", filename))
 ```
 
 Submit job with
@@ -134,7 +135,10 @@ if (idx > 1) {
 .Random.seed <- s
 
 df <- data.frame(data = rnorm(1000))
-write.csv(df, paste0("output_", idx, ".csv"), row.names = FALSE)
+
+filename <-  paste0("output_", idx, ".csv")
+write.csv(df, filename, row.names = FALSE)
+print(paste0("Simulated ", n_samples, " and written to ", filename))
 ```
 
 Submit job with ``sbatch submit_array.sh``
