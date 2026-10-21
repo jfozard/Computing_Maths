@@ -1,6 +1,7 @@
 args <- commandArgs(trailingOnly = TRUE)
 idx <- as.numeric(args[1])
 
+n_samples <- 1000
 
 RNGkind("L'Ecuyer-CMRG")
 set.seed(42)
@@ -13,5 +14,8 @@ if (idx > 1) {
 }
 .Random.seed <- s
 
-df <- data.frame(data = rnorm(1000))
-write.csv(df, paste0("output_", idx, ".csv"), row.names = FALSE)
+df <- data.frame(data = rnorm(n_samples))
+
+filename <-  paste0("output_", idx, ".csv")
+write.csv(df, filename, row.names = FALSE)
+print(paste0("Simulated ", n_samples, " and written to ", filename))

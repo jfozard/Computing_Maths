@@ -18,8 +18,7 @@ results_list <- mclapply(
  mc.cores = n_cores
 )
 results_mclapply <- do.call(rbind, results_list)
-head(results_mclapply)
-summary(results_mclapply)
+
 
 write.csv(results_mclapply, "independent_sim_results_mclapply.csv", row.names = FALSE)
-
+print(paste0("Simulated ", n_simulations, " with ", n_sample_per_sim))

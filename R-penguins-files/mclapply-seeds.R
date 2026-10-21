@@ -37,3 +37,5 @@ write.csv(
   "independent_sim_results_mclapply.csv",
   row.names = FALSE
 )
+
+print(paste0("Simulated ", n_simulations, " with ", n_sample_per_sim))
