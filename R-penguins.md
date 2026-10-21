@@ -139,18 +139,14 @@ Submit job with ``sbatch submit_array.sh``
 You then need to combine all the results from the output files into one
 ```R
 # Read in simulation-ID order.
-results_array <- do.call(
-  rbind,
-  lapply(seq_len(10L), function(i) {
-    read.csv(paste0("output_", i, ".csv"))$data
-  })
-)
+combined <- data.frame()
 
-write.csv(
-  results_array,
-  "combined_array_results.csv",
-  row.names = FALSE
-)
+for (i in 1:10) {
+  df <- read.csv(paste0("output_", i, ".csv"))
+  combined <- rbind(combined, df)
+}
+
+write.csv(combined, "combined_results.csv", row.names = FALSE)
 ```
 
 #### Single job but using the same seeds as the array job
