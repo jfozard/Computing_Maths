@@ -88,7 +88,9 @@ results_list <- mclapply(
  function(i) { run_one_simulation(i, base_simulation_seed) },
  mc.cores = n_cores
 )
-results_mclapply <- do.call(rbind, results_list)
+results_mclapply <- data.frame(
+  data = unlist(results_list, use.names = FALSE)
+)
 head(results_mclapply)
 summary(results_mclapply)
 
@@ -193,8 +195,9 @@ results_list <- mclapply(
   mc.set.seed = FALSE
 )
 
-# One row per simulation, one column per draw.
-results_mclapply <- do.call(rbind, results_list)
+results_mclapply <- data.frame(
+  data = unlist(results_list, use.names = FALSE)
+)
 
 write.csv(
   results_mclapply,
