@@ -11,7 +11,7 @@
 * Lancaster Univesity main computing resource. Typically offers more cores, memory, and shared access via a job scheduler like SLURM.
 * Multiple partitions - some 16 core 64GB, some up to 128 core 512GB.
 * Also some GPUs - 8 3xV100 32GB / 192GB / 32 core GPU machines. Machines with 3xL40s 48gb and two machines with 2xH200.
-* To access - Supervisor applies at ISS HEC page (pretty fast and trivial) 
+* To access - Supervisor applies at ISS HEC page (usually takes a few days) 
 * Documentation - https://lancaster-hec.readthedocs.io/en/latest/index.html
 
 
@@ -95,7 +95,7 @@ head(results_mclapply)
 summary(results_mclapply)
 
 write.csv(results_mclapply, "independent_sim_results_mclapply.csv", row.names = FALSE)
-print(paste0("Simulated ", n_samples, " and written to ", filename))
+print(paste0("Simulated ", n_simulations, " with ", n_sample_per_sim))
 ```
 
 Submit job with
@@ -135,8 +135,8 @@ if (idx > 1) {
   }
 }
 .Random.seed <- s
-
-df <- data.frame(data = rnorm(1000))
+n_samples <- 1000
+df <- data.frame(data = rnorm(n_samples))
 
 filename <-  paste0("output_", idx, ".csv")
 write.csv(df, filename, row.names = FALSE)
@@ -204,4 +204,20 @@ write.csv(
   "independent_sim_results_mclapply.csv",
   row.names = FALSE
 )
+print(paste0("Simulated ", n_simulations, " with ", n_sample_per_sim))
 ```
+
+submit_new_single.sh
+```bash
+#!/bin/bash
+#SBATCH --partition=PenguinPartition       # Partition to run on (-p_
+#SBATCH --job-name=R       # Name of the job (-J)
+#SBATCH --nodes=1                 # Number of nodes to use (-N)
+#SBATCH --ntasks-per-node=1       # Number of tasks (processes) per node 
+#SBATCH --cpus-per-task=8         # Number of CPU cores per task (-c)
+#SBATCH --mem=8G                  # Memory per node (e.g., 8GB). Can also specify per CPU with --mem-per-cpu
+#SBATCH --time=00:05:00           # Wall clock time limit (e.g., 5 minutes)
+Rscript mclapply-seeds.R
+```
+
+Submit with `sbatch submit_new_single.sh`
