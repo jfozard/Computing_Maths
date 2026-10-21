@@ -8,4 +8,4 @@
 #SBATCH --output=parallel_%A_%a.out # Job_ID, Task_ID
 #SBATCH --error=parallel_error_%A_%a.err
 
-Rscript parallel_seeds.R "${SLURM_ARRAY_TASK_ID}"
+Rscript parallel_seed.R "${SLURM_ARRAY_TASK_ID}"
