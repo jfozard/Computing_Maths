@@ -54,6 +54,7 @@ Copy a directory from your laptop to the Penguins
 
 #### Single jobs
 
+submit_single.sh
 ```bash
 #!/bin/bash
 #SBATCH --partition=PenguinPartition       # Partition to run on (-p_
@@ -100,6 +101,7 @@ Submit job with
 
 #### Job arrays in R
 
+submit_array.sh
 ```bash
 #!/bin/bash
 #SBATCH --job-name=r_sim_array
@@ -114,6 +116,7 @@ Submit job with
 Rscript parallel_seeds.R "${SLURM_ARRAY_TASK_ID}"
 ```
 
+parallel_seeds.R
 ```R
 args <- commandArgs(trailingOnly = TRUE)
 idx <- as.numeric(args[1])
@@ -137,6 +140,8 @@ write.csv(df, paste0("output_", idx, ".csv"), row.names = FALSE)
 Submit job with ``sbatch submit_array.sh``
 
 You then need to combine all the results from the output files into one
+
+combine.R
 ```R
 # Read in simulation-ID order.
 combined <- data.frame()
@@ -151,7 +156,7 @@ write.csv(combined, "combined_results.csv", row.names = FALSE)
 
 #### Single job but using the same seeds as the array job
 
-mclapply-test.R
+mclapply-seeds.R
 ```R
 library(parallel)
 
