@@ -29,8 +29,10 @@ results_list <- mclapply(
   mc.set.seed = FALSE
 )
 
-# One row per simulation, one column per draw.
-results_mclapply <- do.call(rbind, results_list)
+results_mclapply <- data.frame(
+  data = unlist(results_list, use.names = FALSE)
+)
+
 
 write.csv(
   results_mclapply,
