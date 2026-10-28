@@ -22,10 +22,12 @@ Software on the penguins isn't actively managed.
 
 First install `pyenv` in your own home directory - `curl -fsSL https://pyenv.run | bash`
 
+Add the text provided to your `.bashrc` file. Then `source ~/.bashrc`
+
 Then install a reasonably recent Python version:
 `pyenv install 3.14`.  
 Choose that version
-`pyenv local 3.14`
+`pyenv global 3.14`
 and test which version is being used
 `python --version`
 
@@ -107,7 +109,7 @@ Job arrays are more suitable if you want to run the same task multiple times wit
 #SBATCH --output=simulation-%A_%a.out
 
 echo "$SLURM_ARRAY_TASK_ID"
-./my_env/bin/python simulation.py "$SLURM_ARRAY_TASK_ID"
+$HOME/my_venv/bin/python simulation.py "$SLURM_ARRAY_TASK_ID"
 ```
 
 The script is run 100 times, each time with a different value for `$SLURM_ARRAY_TASK_ID`
@@ -206,7 +208,7 @@ export MKL_NUM_THREADS=1
 export OMP_NUM_THREADS=1
 
 cd "$HOME/my-project"
-./my_venv/bin/python simulation.py
+$HOME/my_venv/bin/python simulation.py
 ```
 
 #### R
