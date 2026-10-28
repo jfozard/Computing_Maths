@@ -249,7 +249,7 @@ saveRDS(results, "results-r.rds")
 cd "$HOME/my-project"
 Rscript parallel.py
 ```
-These simulations will be reproducible *provided* the same number of workers is used.
+These simulations will be reproducible *provided* the same number of workers is used. It's possible to manually set the seed for each thread.
 
 
 ## Other slurm commands
