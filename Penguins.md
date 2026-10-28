@@ -60,7 +60,7 @@ library(evd)
 ```
 
 
-Can manage R versions using tools such as `Rig` `https://rig.r-lib.org/`
+Can manage R versions using tools such as `Rig` `https://rig.r-lib.org/` - see `https://rig.r-lib.org/tutorial-user.html`
 
 Manage R environments using `renv` `https://rstudio.github.io/renv/articles/renv.html`
 
