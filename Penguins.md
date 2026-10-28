@@ -1,4 +1,4 @@
-# Using the Penguins cluster
+y# Using the Penguins cluster
 
 ## Getting started
 
@@ -81,7 +81,19 @@ For each job, need to request resources. Usually done in a batch file, e.g.
 #SBATCH --cpus-per-task=1         # Number of CPU cores per task (-c)
 #SBATCH --mem=4G                  # Memory per node (e.g., 14B). Can also specify per CPU with --mem-per-cpu
 #SBATCH --time=00:05:00           # Wall clock time limit (e.g., 5 minutes)
+job_id <- as.integer(commandArgs(trailingOnly = TRUE)[1])
 
+RNGkind("L'Ecuyer-CMRG")
+set.seed(123)
+
+# Job 1 uses the initial stream; job 2 uses the next, etc.
+for (j in seq_len(job_id - 1L)) {
+  .Random.seed <- nextRNGStream(.Random.seed)
+}
+
+result <- mean(rnorm(1000))  # Replace with your simulation.
+
+saveRDS(result, sprintf("result-%03d.rds", id))
 hostname
 ```
 
@@ -128,7 +140,7 @@ for (j in seq_len(job_id - 1L)) {
 
 result <- mean(rnorm(1000))  # Replace with your simulation.
 
-saveRDS(result, sprintf("result-%03d.rds", id))
+saveRDS(result, sprintf("result-%03d.rds", job_id))
 ```
 
 Note the RNG seed handling - need to be careful with random number generators!
