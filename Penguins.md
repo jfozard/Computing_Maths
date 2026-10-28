@@ -116,13 +116,23 @@ The script is run 100 times, each time with a different value for `$SLURM_ARRAY_
 
 To use this in a script, parse the command line variable in the script - e.g.
 ```R
-id <- as.integer(commandArgs(trailingOnly = TRUE)[1])
+job_id <- as.integer(commandArgs(trailingOnly = TRUE)[1])
 
-set.seed(id)
+RNGkind("L'Ecuyer-CMRG")
+set.seed(123)
+
+# Job 1 uses the initial stream; job 2 uses the next, etc.
+for (j in seq_len(job_id - 1L)) {
+  .Random.seed <- nextRNGStream(.Random.seed)
+}
+
 result <- mean(rnorm(1000))  # Replace with your simulation.
 
 saveRDS(result, sprintf("result-%03d.rds", id))
 ```
+
+Note the RNG seed handling - need to be careful with random number generators!
+
 or
 ```Python
 import sys
