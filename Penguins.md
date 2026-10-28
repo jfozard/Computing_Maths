@@ -224,22 +224,14 @@ nworkers <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", "1"))
 RNGkind("L'Ecuyer-CMRG")
 set.seed(12345)
 
-seeds <- vector("list", 20)
-seeds[[1]] <- .Random.seed
-for (i in 2:20) {
-  seeds[[i]] <- nextRNGStream(seeds[[i - 1]])
-}
-
 simulate <- function(i) {
-  assign(".Random.seed", seeds[[i]], envir = .GlobalEnv)
   mean(rnorm(100000))
 }
 
 results <- mclapply(
-  seq_along(seeds),
+  1:1000,
   simulate,
-  mc.cores = nworkers,
-  mc.set.seed = FALSE  # Each simulation sets its own stream.
+  mc.cores = nworkers
 )
 
 saveRDS(results, "results-r.rds")
@@ -257,7 +249,7 @@ saveRDS(results, "results-r.rds")
 cd "$HOME/my-project"
 Rscript parallel.py
 ```
-
+These simulations will be reproducible *provided* the same number of workers is used.
 
 
 ## Other slurm commands
