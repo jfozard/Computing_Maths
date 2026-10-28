@@ -46,6 +46,18 @@ You can install python versions using `uv python install` or `uv python install 
 
 R version 4.3.3 installed. Instructions to install packages locally on `ma-info.lancs.ac.uk`
 
+Install packages into a local directory. At the command line:
+```bash
+mkdir -p ~/R/library
+```
+Then in R:
+```R
+install.packages("evd", lib="~/R/library")
+.libPaths(c("~/R/library", .libPaths()))
+library(evd)
+```
+
+
 Can manage R versions using tools such as `Rig` `https://rig.r-lib.org/`
 
 Manage R environments using `renv` `https://rstudio.github.io/renv/articles/renv.html`
