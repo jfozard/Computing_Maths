@@ -268,6 +268,17 @@ These simulations will be reproducible *provided* the same number of workers is 
 Interactive jobs
 `srun --pty bash -i`
 
+## Copying files
+
+`scp local_file fozardj@icefloe-fe.lancs.ac.uk:`
+`scp -r fozardj@icefloe-fe.lancs.ac.uk:remote_directory .`
+
+And can use rsync
+
+`rsync -avP local_directory fozardj@icefloe-fe.lancs.ac.uk:`
+
+
+
 `sinfo` - show all available queues
 
 `squeue` - show all running and waiting jobs
